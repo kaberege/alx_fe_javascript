@@ -222,7 +222,7 @@ function filterQuotes() {
 
 
 // Function to fetch quotes from server
-async function fetchQuotesFromServer() {
+async function syncQuotes() {
     try {
         // Simulate fetching quotes from a server API
         // Replace with actual API call in a real application
@@ -252,4 +252,4 @@ async function fetchQuotesFromServer() {
     }
 }
 
-setInterval(fetchQuotesFromServer, 5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
+setInterval(syncQuotes, 5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
