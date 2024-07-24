@@ -231,7 +231,7 @@ async function fetchQuotesFromServer() {
         { text: "Server quote 2", category: "Server category 2" }
       ];
       */
-      const serverQuotes = 'https://jsonplaceholder.typicode.com/users';
+      const serverQuotes = "https://jsonplaceholder.typicode.com/posts";
       const response = await fetch(serverQuotes);
       const fetchQuotes = await response.json();
       // Merge server quotes with local quotes (assuming no conflicts for simplicity)
@@ -245,5 +245,5 @@ async function fetchQuotesFromServer() {
   }
   
   // Periodically fetch quotes from server (every 5 minutes)
-setInterval(fetchQuotesFromServer,   60 * 1000); // interval as needed
+setInterval(fetchQuotesFromServer, 1000); // interval as needed
   
