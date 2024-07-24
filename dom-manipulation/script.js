@@ -123,8 +123,8 @@ function removeRows() {
 function showRandomQuote() {
     removeRows();
     const currentIndex = myQuotes[Math.floor(Math.random() * myQuotes.length)];
-    td1.textContent = currentIndex.text;
-    td2.textContent = currentIndex.category;
+    td1.innerHTML = currentIndex.text;
+    td2.innerHTML = currentIndex.category;
     myRow2.appendChild(td1);
     myRow2.appendChild(td2);
     myTable.appendChild(myRow2);
@@ -204,10 +204,10 @@ function importFromJsonFile(event) {
 }
 
 // function to populate the dropdown menu unique categories of existing quotes
-function myPopulate(arr) {
+function populateCategories(arr) {
     const categoryFilter = document.getElementById("categoryFilter");
     const unique = [];
-    arr.forEach(value => {
+    arr.map(value => {
         if (!unique.includes(value.category)) {
             unique.push(value.category)
         }
@@ -219,7 +219,7 @@ function myPopulate(arr) {
         categoryFilter.appendChild(option);
     });
 }
-myPopulate(myQuotes);
+populateCategories(myQuotes);
 
 // function to update the displayed quotes based on the selected category.
 function filterQuotes() {
