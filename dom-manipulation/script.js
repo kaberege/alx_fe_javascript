@@ -246,7 +246,7 @@ async function syncQuotes() {
        myQuotes.push(fetchQuotes["0"]);
         saveQuotes();
         populateCategories();
-       alert('Quotes synced with server.'); // Simulating delay for fetching data
+       alert("Quotes synced with server!"); // Simulating delay for fetching data
     } catch (err) {
         alert(err);
     }
