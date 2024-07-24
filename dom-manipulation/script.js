@@ -111,7 +111,7 @@ function showRandomQuote() {
     myRow2.appendChild(td2);
     myTable.appendChild(myRow2);
     quoteDisplay.appendChild(myTable);
-   // localStorage.removeItem("option");       // remove last selected option
+    // localStorage.removeItem("option");       // remove last selected option
 }
 
 
@@ -223,27 +223,33 @@ function filterQuotes() {
 
 // Function to fetch quotes from server
 async function fetchQuotesFromServer() {
-    try{
-    // Simulate fetching quotes from a server API
-    // Replace with actual API call in a real application
-     /*  const serverQuotes = [
-        { text: "Server quote 1", category: "Server category 1" },
-        { text: "Server quote 2", category: "Server category 2" }
-      ];
-      */
-      const serverQuotes = "https://jsonplaceholder.typicode.com/posts";
-      const response = await fetch(serverQuotes);
-      const fetchQuotes = await response.json();
-      // Merge server quotes with local quotes (assuming no conflicts for simplicity)
-      myQuotes.push(...fetchQuotes);
-      saveQuotes();
-      populateCategories();
-      alert('Quotes synced with server.'); // Simulating delay for fetching data
-    }catch(err){
+    try {
+        // Simulate fetching quotes from a server API
+        // Replace with actual API call in a real application
+        const postedQuotes = [
+            { text: "Server quote 1", category: "Server category 1" }
+        ];
+
+        const serverQuotes = "https://jsonplaceholder.typicode.com/posts";
+        const my = await fetch(serverQuotes);
+        //console.log(my.json());
+
+        const response = await fetch(serverQuotes, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(postedQuotes)
+        });
+        const fetchQuotes = await response.json();
+        // Merge server quotes with local quotes (assuming no conflicts for simplicity)
+       myQuotes.push(fetchQuotes["0"]);
+        saveQuotes();
+        populateCategories();
+       alert('Quotes synced with server.'); // Simulating delay for fetching data
+    } catch (err) {
         alert(err);
     }
-  }
-  
-  // Periodically fetch quotes from server (every 5 minutes)
-setInterval(fetchQuotesFromServer, 1000); // interval as needed
-  
+}
+
+setInterval(fetchQuotesFromServer, 5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
