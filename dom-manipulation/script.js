@@ -28,28 +28,10 @@ myTable.appendChild(myRow1);
 loadTasks();  // Load tasks from localStorage on page load
 // Function to load tasks from localStorage
 function loadTasks() {
-    /*
-        const filteredQuotes = myQuotes.filter(quote => quote.category == );
-        removeRows();
-        filteredQuotes.forEach(element => {
-            const myRow2 = document.createElement("tr");
-            const td1 = document.createElement("td");
-            const td2 = document.createElement("td");
-            td1.textContent = element.text;
-            td2.textContent = element.category;
-            myRow2.appendChild(td1);
-            myRow2.appendChild(td2);
-            myTable.appendChild(myRow2);
-        });
-        quoteDisplay.appendChild(myTable);
-    }else {
-    
-    }
-    */
     const storedQuotes = JSON.parse(localStorage.getItem("localQuotes") || '[]');
     const lastSelected = JSON.parse(localStorage.getItem("option") || "[]");
-    console.log(typeof storedQuotes);
-    console.log(typeof lastSelected);
+    //console.log(typeof storedQuotes);
+    //console.log(typeof lastSelected);
     if (storedQuotes == "") {
         if (lastSelected != "") {
             const filteredQuotes = lastSelected === 'all' ? myQuotes : myQuotes.filter(quote => quote.category === lastSelected);
@@ -129,6 +111,7 @@ function showRandomQuote() {
     myRow2.appendChild(td2);
     myTable.appendChild(myRow2);
     quoteDisplay.appendChild(myTable);
+   // localStorage.removeItem("option");       // remove last selected option
 }
 
 
@@ -156,12 +139,9 @@ function createAddQuoteForm() {
         newArr.text = newQuoteText.value.trim();
         newArr.category = newQuoteCategory.value.trim();
         myQuotes.push(newArr);
-        const selectedCategory = document.getElementById('categoryFilter');
-        const option = document.createElement("option");
-        option.textContent = newArr.category;;
-        option.value = newArr.category;
-        selectedCategory.appendChild(option);
-        saveQuotes();                               //update local storage
+        saveQuotes();
+        populateCategories(myQuotes);             //update local storage
+        //localStorage.removeItem("option");        // remove last selected option
         newQuoteText.value = "";
         newQuoteCategory.value = "";
     } else {
@@ -205,6 +185,7 @@ function importFromJsonFile(event) {
 // function to populate the dropdown menu unique categories of existing quotes
 function populateCategories(arr) {
     const categoryFilter = document.getElementById("categoryFilter");
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
     const unique = [];
     arr.map(value => {
         if (!unique.includes(value.category)) {
@@ -238,3 +219,31 @@ function filterQuotes() {
     quoteDisplay.appendChild(myTable);
     localStorage.setItem("option", JSON.stringify(selectedCategory));
 }
+
+
+// Function to fetch quotes from server
+async function fetchQuotesFromServer() {
+    try{
+    // Simulate fetching quotes from a server API
+    // Replace with actual API call in a real application
+     /*  const serverQuotes = [
+        { text: "Server quote 1", category: "Server category 1" },
+        { text: "Server quote 2", category: "Server category 2" }
+      ];
+      */
+      const serverQuotes = 'https://jsonplaceholder.typicode.com/users';
+      const response = await fetch(serverQuotes);
+      const fetchQuotes = await response.json();
+      // Merge server quotes with local quotes (assuming no conflicts for simplicity)
+      myQuotes.push(...fetchQuotes);
+      saveQuotes();
+      populateCategories();
+      alert('Quotes synced with server.'); // Simulating delay for fetching data
+    }catch(err){
+        alert(err);
+    }
+  }
+  
+  // Periodically fetch quotes from server (every 5 minutes)
+setInterval(fetchQuotesFromServer,   60 * 1000); // interval as needed
+  
