@@ -1,6 +1,7 @@
 //document.addEventListener("DOMContentLoaded", () => {
 //});
 //localStorage.clear();
+//localStorage.removeItem("option");
 
 let myQuotes = [
     { text: "First quote", category: "1" },
@@ -25,12 +26,12 @@ myTable.appendChild(myRow1);
 
 //localStorage.clear()
 loadTasks();  // Load tasks from localStorage on page load
-
 // Function to load tasks from localStorage
 function loadTasks() {
-    const storedQuotes = JSON.parse(localStorage.getItem("localQuotes") || '[]');
-    if (storedQuotes == "") {
-        myQuotes.forEach(element => {
+    /*
+        const filteredQuotes = myQuotes.filter(quote => quote.category == );
+        removeRows();
+        filteredQuotes.forEach(element => {
             const myRow2 = document.createElement("tr");
             const td1 = document.createElement("td");
             const td2 = document.createElement("td");
@@ -41,43 +42,99 @@ function loadTasks() {
             myTable.appendChild(myRow2);
         });
         quoteDisplay.appendChild(myTable);
+    }else {
+    
+    }
+    */
+    const storedQuotes = JSON.parse(localStorage.getItem("localQuotes") || '[]');
+    const lastSelected = JSON.parse(localStorage.getItem("option") || "[]");
+    console.log(typeof storedQuotes);
+    console.log(typeof lastSelected);
+    if (storedQuotes == "") {
+        if (lastSelected != "") {
+            const filteredQuotes = lastSelected === 'all' ? myQuotes : myQuotes.filter(quote => quote.category === lastSelected);
+            filteredQuotes.forEach(element => {
+                const myRow2 = document.createElement("tr");
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                td1.textContent = element.text;
+                td2.textContent = element.category;
+                myRow2.appendChild(td1);
+                myRow2.appendChild(td2);
+                myTable.appendChild(myRow2);
+            });
+            quoteDisplay.appendChild(myTable);
+        } else {
+            myQuotes.forEach(element => {
+                const myRow2 = document.createElement("tr");
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                td1.textContent = element.text;
+                td2.textContent = element.category;
+                myRow2.appendChild(td1);
+                myRow2.appendChild(td2);
+                myTable.appendChild(myRow2);
+            });
+            quoteDisplay.appendChild(myTable);
+        }
     } else {
         myQuotes = [...storedQuotes];
-        myQuotes.forEach(element => {
-            const myRow2 = document.createElement("tr");
-            const td1 = document.createElement("td");
-            const td2 = document.createElement("td");
-            td1.textContent = element.text;
-            td2.textContent = element.category;
-            myRow2.appendChild(td1);
-            myRow2.appendChild(td2);
-            myTable.appendChild(myRow2);
-        });
-        quoteDisplay.appendChild(myTable);
+        if (lastSelected != "") {
+            const filteredQuotes = lastSelected === 'all' ? myQuotes : myQuotes.filter(quote => quote.category === lastSelected);
+            filteredQuotes.forEach(element => {
+                const myRow2 = document.createElement("tr");
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                td1.textContent = element.text;
+                td2.textContent = element.category;
+                myRow2.appendChild(td1);
+                myRow2.appendChild(td2);
+                myTable.appendChild(myRow2);
+            });
+            quoteDisplay.appendChild(myTable);
+        } else {
+            myQuotes.forEach(element => {
+                const myRow2 = document.createElement("tr");
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                td1.textContent = element.text;
+                td2.textContent = element.category;
+                myRow2.appendChild(td1);
+                myRow2.appendChild(td2);
+                myTable.appendChild(myRow2);
+            });
+            quoteDisplay.appendChild(myTable);
+        }
     }
 }
 
 //event-listeners
 newQuote.addEventListener("click", showRandomQuote);
 
-//function to display a random quote
-function showRandomQuote() {
+//function to clear existing data rows
+function removeRows() {
     const myRemove = myTable.childNodes;
     while (myRemove[1]) {
         myRemove[1].remove();
     }
-        const currentIndex = myQuotes[Math.floor(Math.random() * myQuotes.length)];
-        td1.textContent = currentIndex.text;
-        td2.textContent = currentIndex.category;
-        myRow2.appendChild(td1);
-        myRow2.appendChild(td2);
-        myTable.appendChild(myRow2);
-        quoteDisplay.appendChild(myTable);
+}
+
+//function to display a random quote
+function showRandomQuote() {
+    removeRows();
+    const currentIndex = myQuotes[Math.floor(Math.random() * myQuotes.length)];
+    td1.textContent = currentIndex.text;
+    td2.textContent = currentIndex.category;
+    myRow2.appendChild(td1);
+    myRow2.appendChild(td2);
+    myTable.appendChild(myRow2);
+    quoteDisplay.appendChild(myTable);
 }
 
 
 //function to add a new quote
 function addQuote() {
+    // removeRows();
     const myRow2 = document.createElement("tr");
     const td1 = document.createElement("td");
     const td2 = document.createElement("td");
@@ -100,6 +157,11 @@ function addQuote() {
         newArr.text = newQuoteText.value.trim();
         newArr.category = newQuoteCategory.value.trim();
         myQuotes.push(newArr);
+        const selectedCategory = document.getElementById('categoryFilter');
+        const option = document.createElement("option");
+        option.textContent = newArr.category;;
+        option.value = newArr.category;
+        selectedCategory.appendChild(option);
         saveQuotes();                               //update local storage
         newQuoteText.value = "";
         newQuoteCategory.value = "";
@@ -139,4 +201,41 @@ function importFromJsonFile(event) {
         alert('Quotes imported successfully!');
     };
     fileReader.readAsText(event.target.files[0]);
+}
+
+// function to populate the dropdown menu unique categories of existing quotes
+function myPopulate(arr) {
+    const categoryFilter = document.getElementById("categoryFilter");
+    const unique = [];
+    arr.forEach(value => {
+        if (!unique.includes(value.category)) {
+            unique.push(value.category)
+        }
+    });
+    unique.forEach(category => {
+        const option = document.createElement("option");
+        option.textContent = category;
+        option.value = category;
+        categoryFilter.appendChild(option);
+    });
+}
+myPopulate(myQuotes);
+
+// function to update the displayed quotes based on the selected category.
+function filterQuotes() {
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    const filteredQuotes = selectedCategory === 'all' ? myQuotes : myQuotes.filter(quote => quote.category === selectedCategory);
+    removeRows();
+    filteredQuotes.forEach(element => {
+        const myRow2 = document.createElement("tr");
+        const td1 = document.createElement("td");
+        const td2 = document.createElement("td");
+        td1.textContent = element.text;
+        td2.textContent = element.category;
+        myRow2.appendChild(td1);
+        myRow2.appendChild(td2);
+        myTable.appendChild(myRow2);
+    });
+    quoteDisplay.appendChild(myTable);
+    localStorage.setItem("option", JSON.stringify(selectedCategory));
 }
