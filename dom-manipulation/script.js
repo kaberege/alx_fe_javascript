@@ -187,9 +187,9 @@ function populateCategories(arr) {
     const categoryFilter = document.getElementById("categoryFilter");
     categoryFilter.innerHTML = '<option value="all">All Categories</option>';
     const unique = [];
-    arr.map(value => {
-        if (!unique.includes(value.category)) {
-            unique.push(value.category)
+    arr.map(item => {
+        if (!unique.includes(item.category)) {
+            unique.push(item.category)
         }
     });
     unique.forEach(category => {
@@ -231,7 +231,7 @@ async function syncQuotes() {
         ];
 
         const serverQuotes = "https://jsonplaceholder.typicode.com/posts";
-        const my = await fetch(serverQuotes);
+       // const my = await fetch(serverQuotes);
         //console.log(my.json());
 
         const response = await fetch(serverQuotes, {
@@ -245,13 +245,13 @@ async function syncQuotes() {
         // Merge server quotes with local quotes (assuming no conflicts for simplicity)
        myQuotes.push(fetchQuotes["0"]);
         saveQuotes();
-        populateCategories();
+        populateCategories(myQuotes);
        alert("Quotes synced with server!"); // Simulating delay for fetching data
     } catch (err) {
         alert(err);
     }
 }
 function fetchQuotesFromServer(){
-    setInterval(syncQuotes, 5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
+    setInterval(syncQuotes,  5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
 }
-fetchQuotesFromServer();
+//fetchQuotesFromServer();
