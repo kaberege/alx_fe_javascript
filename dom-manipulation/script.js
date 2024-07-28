@@ -254,4 +254,4 @@ async function syncQuotes() {
 function fetchQuotesFromServer(){
     setInterval(syncQuotes,  5 * 60 * 1000); // Periodically fetch quotes from server (every 5 minutes)
 }
-//fetchQuotesFromServer();
+fetchQuotesFromServer();
